@@ -1,0 +1,38 @@
+{
+    "arrowParens": "always",
+    "bracketSpacing": true,
+    "embeddedLanguageFormatting": "auto",
+    "htmlWhitespaceSensitivity": "css",
+    "insertPragma": false,
+    "jsxBracketSameLine": true,
+    "jsxSingleQuote": true,
+    "printWidth": 150,
+    "proseWrap": "preserve",
+    "quoteProps": "as-needed",
+    "requirePragma": false,
+    "semi": true,
+    "singleQuote": true,
+    "tabWidth": 2,
+    "trailingComma": "none",
+    "useTabs": false,
+    "overrides": [
+      {
+        "files": "**/lwc/**/*.html",
+        "options": { "parser": "lwc" }
+      },
+      {
+        "files": "*.{cmp,page,component}",
+        "options": { "parser": "html" }
+      },
+      {
+        "files": "*.cls",
+        "options": { "tabWidth": 4 }
+      },
+      {
+        "files": "*.xml",
+        "options": { "semi": false }
+      }
+    ],
+    "apexInsertFinalNewline": false
+  }
+  
