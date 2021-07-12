@@ -104,15 +104,15 @@ public virtual class HttpCallout {
 
     public virtual HttpCallout builder() {
         if (!String.isNotBlank(this.method) || String.isEmpty(this.method)) {
-            throw new HttpCalloutException('Method not found!');
+            throw new HttpCalloutException('Http Method was not provided to HttpCallout');
         }
 
         if (!String.isNotBlank(this.endpoint) || String.isEmpty(this.endpoint)) {
-            throw new HttpCalloutException('Endpoint not found!');
+            throw new HttpCalloutException('Endpoint was not provided to HttpCallout');
         }
 
         if (this.timeout != null && this.timeout > 120000) {
-            throw new HttpCalloutException('Timeout maximum exceeded!');
+            throw new HttpCalloutException('Timeout value provided to HttpCallout is above the maximum value');
         }
 
         this.request = new HttpRequest();
