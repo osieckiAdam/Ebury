@@ -10,12 +10,19 @@ public virtual class HttpCallout {
     public Http httpInstance;
 
     public HttpResponse response;
+    @TestVisible
     private String endpoint; 
+    @TestVisible
     private String method;
+    @TestVisible
     private String body;
+    @TestVisible
     private Integer timeout;
+    @TestVisible
     private Map<String, String> headers;
+    @TestVisible
     private Map<String, List<String>> parameters;
+    @TestVisible
     private Map<String, List<String>> parametersBody;
 
     public HttpCallout() {
@@ -193,6 +200,9 @@ public virtual class HttpCallout {
         return bodyParameters;
     }
 
+    /**
+     * @description Exception thrown by HttpCallout class
+     */
     public class HttpCalloutException extends Exception {
     }
 }
