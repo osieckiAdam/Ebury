@@ -10,16 +10,16 @@ public with sharing class UuidTest {
         Pattern pattern = Pattern.compile('[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}');
 
         //when
+        Test.startTest();
         for(Integer i = 0; i < 10; i++) {
-
-            Test.startTest();
             Uuid uuid = new Uuid();
             Matcher matcher = pattern.matcher(uuid.getValue());
-            Test.stopTest();
+            
 
             //then
             System.assert(matcher.matches(), 'Expecting generated UUID matches the pattern');
         }
+        Test.stopTest();
     }
 
     @isTest
