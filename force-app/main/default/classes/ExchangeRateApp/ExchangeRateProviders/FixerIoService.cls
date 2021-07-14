@@ -14,19 +14,22 @@ public with sharing class FixerIoService implements ExchangeRateProvider {
                 .addParameter('access_key', 'eb841eb6f3a00d7745682ea3a0a96263')
                 .builder();
 
-            System.debug(LoggingLevel.DEBUG, '(BEFORE CALL): ');
             HttpResponse resp = callout.send();
-            System.debug(LoggingLevel.DEBUG, '(after CALL): ');
 
             String jsonresp = resp.getBody();
             Map<String, Object> response = (Map<String, Object>) JSON.deserializeUntyped(jsonresp);
-            System.debug(LoggingLevel.DEBUG, '(response): ' + JSON.SerializePretty(response));
             if ((Boolean) response.get('success')) {
                 Map<String, Object> rates = (Map<String,Object>)response.get('rates');
                 result.put(sellCurrency, castMapOfObjectToDecimal(rates));
             } else {
+                Map<String, Object> error = (Map<String, Object>) response.get('error');
+                error.put('Uuid', new Uuid().getValue());
 
-                throw new FixerIoException('Issue in FixerIo Service: ' + response.get('error') + '. Request data: 1.base: ' + sellCurrency + ' 2.symbols: ' + symbols );
+                if(result.containsKey('ERROR')) {
+                    result.get('ERROR').put(JSON.serialize(error), 0);
+                } else {
+                    result.put('ERROR', new Map<String, Decimal> { JSON.serialize(error) => 0 });
+                }
             }
         }
         return result;
