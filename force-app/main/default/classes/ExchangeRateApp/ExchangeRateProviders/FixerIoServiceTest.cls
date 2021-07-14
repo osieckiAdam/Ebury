@@ -1,102 +1,198 @@
 @IsTest
 global with sharing class FixerIoServiceTest {
-
-
-    private static final Map<String, Map<String, Decimal>> TEST_VAL_EXCHANGE_MAPPING = 
-    new Map<String, Map<String, Decimal>> {
-        'EUR' => new Map<String, Decimal> { 'USD' => 1.18902, 'PLN' => 4.58571, 'EUR' => 1 },
-        'PLN' => new Map<String, Decimal> { 'USD' => 0.33290, 'PLN' => 1, 'EUR' => 0.18 }
+    private static final Decimal TEST_VAL_EUR_TO_USD_RATE = 1.18902;
+    private static final Decimal TEST_VAL_EUR_TO_PLN_RATE = 4.58571;
+    private static final Decimal TEST_VAL_PLN_TO_USD_RATE = 0.33290;
+    private static final Decimal TEST_VAL_PLN_TO_EUR_RATE = 0.18;
+    private static final Map<String, Map<String, Decimal>> TEST_VAL_EXCHANGE_MAPPING = new Map<String, Map<String, Decimal>>{
+        'EUR' => new Map<String, Decimal>{ 'USD' => TEST_VAL_EUR_TO_USD_RATE, 'PLN' => TEST_VAL_EUR_TO_PLN_RATE, 'EUR' => 1 },
+        'PLN' => new Map<String, Decimal>{ 'USD' => TEST_VAL_PLN_TO_USD_RATE, 'PLN' => 1, 'EUR' => TEST_VAL_PLN_TO_EUR_RATE }
     };
+
     private static final Integer TEST_VAL_ERROR_CODE = 105;
     private static final String TEST_VAL_ERROR_TYPE = 'base_currency_access_restricted';
-
-
     private static Integer mockCallsCounter = 0;
 
-    @IsTest
-    static void shouldDoSmth(){
-        //given
-        Test.setMock(HttpCalloutMock.class, new HttpFixerIoServiceMock());
-        Map<String, Set<String>> requestedValues =  new Map<String, Set<String>>{'EUR' => new Set<String>{'PLN'}};
-        //when
-        Test.startTest();
-        Map<String, Map<String, Decimal>> exchangeRates = new FixerIoService().getExchangeRates(requestedValues);
-        Test.stopTest();
-
-        //then
-        System.debug(LoggingLevel.DEBUG, '(exchangeRates): ' + JSON.SerializePretty(exchangeRates));
+    @TestSetup
+    static void setup() {
+        mockCallsCounter = 0;
     }
 
     @IsTest
-    static void shouldDoSmth2(){
+    static void shouldReturnExchangeRatesForSingleTargetCurrency() {
         //given
         Test.setMock(HttpCalloutMock.class, new HttpFixerIoServiceMock());
-        Map<String, Set<String>> requestedValues =  new Map<String, Set<String>>{'EUR' => new Set<String>{'PLN', 'USD', 'EUR'}};
+        Map<String, Set<String>> requestedValues = new Map<String, Set<String>>{ 'EUR' => new Set<String>{ 'PLN' } };
+
         //when
         Test.startTest();
         Map<String, Map<String, Decimal>> exchangeRates = new FixerIoService().getExchangeRates(requestedValues);
         Test.stopTest();
 
         //then
-        System.debug(LoggingLevel.DEBUG, '(exchangeRates): ' + JSON.SerializePretty(exchangeRates));
+        System.assertEquals(1, exchangeRates.keySet().size(), 'Expecting specific number of records were returned');
+        System.assert(exchangeRates.containsKey('EUR'), 'Expecting result contains specific key');
+        System.assert(exchangeRates.get('EUR').containsKey('PLN'), 'Expecting result contains specific key');
+        System.assertEquals(
+            TEST_VAL_EUR_TO_PLN_RATE,
+            exchangeRates.get('EUR').get('PLN'),
+            'Expecting result contains specific value of exchange rate'
+        );
     }
 
     @IsTest
-    static void shouldDoSmth3() {
+    static void shouldReturnExchangeRatesForMultipleTargetCurrencies() {
         //given
         Test.setMock(HttpCalloutMock.class, new HttpFixerIoServiceMock());
-        Map<String, Set<String>> requestedValues =  new Map<String, Set<String>>{'EUR' => new Set<String>{'PLN', 'USD', 'EUR'}, 'PLN' => new Set<String>{'PLN', 'USD', 'EUR'}};
+        Map<String, Set<String>> requestedValues = new Map<String, Set<String>>{ 'EUR' => new Set<String>{ 'PLN', 'USD', 'EUR' } };
+
         //when
         Test.startTest();
         Map<String, Map<String, Decimal>> exchangeRates = new FixerIoService().getExchangeRates(requestedValues);
         Test.stopTest();
 
         //then
-        System.debug(LoggingLevel.DEBUG, '(exchangeRates): ' + JSON.SerializePretty(exchangeRates));
-        System.debug(LoggingLevel.DEBUG, '(mockCallsCounter): ' + mockCallsCounter);
+        System.assertEquals(1, exchangeRates.keySet().size(), 'Expecting specific number of records were returned');
+        System.assert(exchangeRates.containsKey('EUR'), 'Expecting result contains specific key');
+        System.assertEquals(3, exchangeRates.get('EUR').keySet().size(), 'Expecting result contains specific number of key');
+        System.assertEquals(
+            TEST_VAL_EUR_TO_PLN_RATE,
+            exchangeRates.get('EUR').get('PLN'),
+            'Expecting result contains specific value of exchange rate'
+        );
+        System.assertEquals(
+            TEST_VAL_EUR_TO_USD_RATE,
+            exchangeRates.get('EUR').get('USD'),
+            'Expecting result contains specific value of exchange rate'
+        );
+        System.assertEquals(1, exchangeRates.get('EUR').get('EUR'), 'Expecting result contains specific value of exchange rate');
+    }
+
+    @IsTest
+    static void shouldReturnExchangeRatesForMultipleSourceAndTargetCurrencies() {
+        //given
+        Test.setMock(HttpCalloutMock.class, new HttpFixerIoServiceMock());
+        Map<String, Set<String>> requestedValues = new Map<String, Set<String>>{
+            'EUR' => new Set<String>{ 'PLN', 'USD', 'EUR' },
+            'PLN' => new Set<String>{ 'PLN', 'USD', 'EUR' }
+        };
+
+        //when
+        Test.startTest();
+        Map<String, Map<String, Decimal>> exchangeRates = new FixerIoService().getExchangeRates(requestedValues);
+        Test.stopTest();
+
+        //then
+        System.assertEquals(2, exchangeRates.keySet().size(), 'Expecting specific number of records were returned');
+        System.assertEquals(3, exchangeRates.get('EUR').keySet().size(), 'Expecting result contains specific number of key');
+        System.assertEquals(3, exchangeRates.get('PLN').keySet().size(), 'Expecting result contains specific number of key');
+        System.assertEquals(2, mockCallsCounter, 'Expecting that there were two Http Calls created');
     }
 
     @IsTest
     static void shouldReturnError() {
         //given
         Test.setMock(HttpCalloutMock.class, new HttpFixerIoServiceMock());
-        Map<String, Set<String>> requestedValues =  new Map<String, Set<String>>{'BYN' => new Set<String>{'PLN', 'USD', 'EUR'}};
+        Map<String, Set<String>> requestedValues = new Map<String, Set<String>>{ 'BYN' => new Set<String>{ 'PLN', 'USD', 'EUR' } };
         //when
         Test.startTest();
         Map<String, Map<String, Decimal>> exchangeRates = new FixerIoService().getExchangeRates(requestedValues);
         Test.stopTest();
 
         //then
-        System.debug(LoggingLevel.DEBUG, '(exchangeRates): ' + JSON.SerializePretty(exchangeRates));
-        System.debug(LoggingLevel.DEBUG, '(mockCallsCounter): ' + mockCallsCounter);
+        System.assertEquals(1, exchangeRates.keySet().size(), 'Expecting specific number of records were returned');
+        System.assertEquals(1, exchangeRates.get('ERROR').keySet().size(), 'Expecting result contains specific number of key');
+        for (String errorString : exchangeRates.get('ERROR').keySet()) {
+            Map<String, Object> error = (Map<String, Object>) JSON.deserializeUntyped(errorString);
+            System.assertEquals(TEST_VAL_ERROR_TYPE, error.get('type'), 'Expecting specific value of error type');
+            System.assertEquals(TEST_VAL_ERROR_CODE, error.get('code'), 'Expecting specific value of error code');
+            System.assertNotEquals(null, error.get('Uuid'), 'Expecting specific value of error code');
+        }
+        System.assertEquals(1, mockCallsCounter, 'Expecting that there was one Http Call created');
     }
 
-    global class HttpFixerIoServiceSuccessMock implements HttpCalloutMock {
+    @IsTest
+    static void shouldReturnMultipleErrors() {
+        //given
+        Test.setMock(HttpCalloutMock.class, new HttpFixerIoServiceMock());
+        Map<String, Set<String>> requestedValues = new Map<String, Set<String>>{
+            'BYN' => new Set<String>{ 'PLN', 'USD', 'EUR' },
+            'JPY' => new Set<String>{ 'PLN', 'USD', 'EUR' }
+        };
+
+        //when
+        Test.startTest();
+        Map<String, Map<String, Decimal>> exchangeRates = new FixerIoService().getExchangeRates(requestedValues);
+        Test.stopTest();
+
+        //then
+        System.assertEquals(1, exchangeRates.keySet().size(), 'Expecting specific number of records were returned');
+        System.assertEquals(2, exchangeRates.get('ERROR').keySet().size(), 'Expecting result contains specific number of key');
+        for (String errorString : exchangeRates.get('ERROR').keySet()) {
+            Map<String, Object> error = (Map<String, Object>) JSON.deserializeUntyped(errorString);
+            System.assertEquals(TEST_VAL_ERROR_TYPE, error.get('type'), 'Expecting specific value of error type');
+            System.assertEquals(TEST_VAL_ERROR_CODE, error.get('code'), 'Expecting specific value of error code');
+            System.assertNotEquals(null, error.get('Uuid'), 'Expecting specific value of error code');
+        }
+        System.assertEquals(2, mockCallsCounter, 'Expecting that there were two Http Calls created');
+    }
+
+    @IsTest
+    static void shouldReturnErrorAndCorrectResponse() {
+        //given
+        Test.setMock(HttpCalloutMock.class, new HttpFixerIoServiceMock());
+        Map<String, Set<String>> requestedValues = new Map<String, Set<String>>{
+            'BYN' => new Set<String>{ 'PLN', 'USD', 'EUR' },
+            'EUR' => new Set<String>{ 'PLN', 'USD', 'EUR' }
+        };
+
+        //when
+        Test.startTest();
+        Map<String, Map<String, Decimal>> exchangeRates = new FixerIoService().getExchangeRates(requestedValues);
+        Test.stopTest();
+
+        //then
+        System.assertEquals(2, exchangeRates.keySet().size(), 'Expecting specific number of records were returned');
+        System.assertEquals(3, exchangeRates.get('EUR').keySet().size(), 'Expecting result contains specific number of key');
+        System.assertEquals(
+            TEST_VAL_EUR_TO_PLN_RATE,
+            exchangeRates.get('EUR').get('PLN'),
+            'Expecting result contains specific value of exchange rate'
+        );
+        System.assertEquals(
+            TEST_VAL_EUR_TO_USD_RATE,
+            exchangeRates.get('EUR').get('USD'),
+            'Expecting result contains specific value of exchange rate'
+        );
+        System.assertEquals(1, exchangeRates.get('EUR').get('EUR'), 'Expecting result contains specific value of exchange rate');
+        System.assertEquals(1, exchangeRates.get('ERROR').keySet().size(), 'Expecting result contains specific number of key');
+        for (String errorString : exchangeRates.get('ERROR').keySet()) {
+            Map<String, Object> error = (Map<String, Object>) JSON.deserializeUntyped(errorString);
+            System.assertEquals(TEST_VAL_ERROR_TYPE, error.get('type'), 'Expecting specific value of error type');
+            System.assertEquals(TEST_VAL_ERROR_CODE, error.get('code'), 'Expecting specific value of error code');
+            System.assertNotEquals(null, error.get('Uuid'), 'Expecting specific value of error code');
+        }
+        System.assertEquals(2, mockCallsCounter, 'Expecting that there were two Http Calls created');
+    }
+
+    global class HttpFixerIoServiceMock implements HttpCalloutMock {
         global HTTPResponse respond(HTTPRequest req) {
             mockCallsCounter++;
 
             PageReference ref = new PageReference(req.getEndpoint());
 
             String baseCurrency = ref.getParameters().get('base');
-            if(TEST_VAL_EXCHANGE_MAPPING.containsKey(baseCurrency)) {
-                List<String> symbols =  ref.getParameters().get('symbols').split(',');
-                Map<String, Decimal> rates = new Map<String, Decimal>(); 
-                for(String currencySymbol : symbols) {
+            FixerIoServiceMockResponseBody body = new FixerIoServiceMockResponseBody();
+            if (TEST_VAL_EXCHANGE_MAPPING.containsKey(baseCurrency)) {
+                List<String> symbols = ref.getParameters().get('symbols').split(',');
+                Map<String, Decimal> rates = new Map<String, Decimal>();
+                for (String currencySymbol : symbols) {
                     rates.put(currencySymbol, TEST_VAL_EXCHANGE_MAPPING.get(baseCurrency).get(currencySymbol));
                 }
-                FixerIoServiceMockResponseBody body = new FixerIoServiceMockResponseBody().setSuccess(true).setBase(baseCurrency).setRates(rates);
+                body.setSuccess(true).setBase(baseCurrency).setRates(rates);
             } else {
-                FixerIoServiceMockResponseBody body = new FixerIoServiceMockResponseBody().setSuccess(false).setError(new Error().setCode(TEST_VAL_ERROR_CODE).setType(TEST_VAL_ERROR_TYPE));
+                body.setSuccess(false).setError(new Error().setCode(TEST_VAL_ERROR_CODE).setType(TEST_VAL_ERROR_TYPE));
             }
-     
-            List<String> symbols =  ref.getParameters().get('symbols').split(',');
-            
-            Map<String, Decimal> rates = new Map<String, Decimal>(); 
-            for(String currencySymbol : symbols) {
-                rates.put(currencySymbol, TEST_VAL_EXCHANGE_MAPPING.get(baseCurrency).get(currencySymbol));
-            }
-
-            FixerIoServiceMockResponseBody body = new FixerIoServiceMockResponseBody().setSuccess(true).setBase(baseCurrency).setRates(rates);
 
             HttpResponse res = new HttpResponse();
             res.setHeader('Content-Type', 'application/json');
@@ -106,13 +202,12 @@ global with sharing class FixerIoServiceTest {
         }
     }
 
-
     private class FixerIoServiceMockResponseBody {
-        Boolean success {get; private set;}
-        String base {get; private set;}
-        Map<String, Decimal> rates {get; private set;}
+        Boolean success { get; private set; }
+        String base { get; private set; }
+        Map<String, Decimal> rates { get; private set; }
 
-        Error error {get; private set;}
+        Error error { get; private set; }
 
         public FixerIoServiceMockResponseBody setSuccess(Boolean success) {
             this.success = success;
@@ -134,7 +229,6 @@ global with sharing class FixerIoServiceTest {
             return this;
         }
     }
-
 
     private class Error {
         Integer code;

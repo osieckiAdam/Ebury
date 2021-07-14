@@ -181,7 +181,7 @@ public with sharing class HttpCalloutTest {
             'https://test.endpoint.com?' +
             TEST_VAL_HEADER_KEY_2 +
             '=' +
-            TEST_VAL_HEADER_VALUE_2,
+            TEST_VAL_HEADER_VALUE_2 + '&' + TEST_VAL_HEADER_KEY_1 + '=' + TEST_VAL_HEADER_VALUE_1,
             callout.request.getEndpoint(),
             'Expecting specific value of endpoint'
         );
