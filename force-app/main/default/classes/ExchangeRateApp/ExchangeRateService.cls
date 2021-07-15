@@ -8,8 +8,7 @@ public with sharing class ExchangeRateService {
     private Map<String, Set<String>> ratesToRetrieve = new Map<String,Set<String>>();
 
     private ExchangeRateService() {
-        //TODO CREATE INJECTOR TO GET PROPER CONCRETE CLASS FOR EXCHANGE RATE PROVIDER
-        this.exchangeRateProvider = new FixerIoService();
+        this.exchangeRateProvider = (ExchangeRateProvider) di_Injector.Org.getInstance('ExchangeRateProvider');
     }
 
     public static ExchangeRateService getInstance() {
