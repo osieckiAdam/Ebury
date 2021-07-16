@@ -1,16 +1,5 @@
 @IsTest
 global with sharing class FixerIoServiceTest {
-    private static final Decimal TEST_VAL_EUR_TO_USD_RATE = 1.18902;
-    private static final Decimal TEST_VAL_EUR_TO_PLN_RATE = 4.58571;
-    private static final Decimal TEST_VAL_PLN_TO_USD_RATE = 0.33290;
-    private static final Decimal TEST_VAL_PLN_TO_EUR_RATE = 0.18;
-    private static final Map<String, Map<String, Decimal>> TEST_VAL_EXCHANGE_MAPPING = new Map<String, Map<String, Decimal>>{
-        'EUR' => new Map<String, Decimal>{ 'USD' => TEST_VAL_EUR_TO_USD_RATE, 'PLN' => TEST_VAL_EUR_TO_PLN_RATE, 'EUR' => 1 },
-        'PLN' => new Map<String, Decimal>{ 'USD' => TEST_VAL_PLN_TO_USD_RATE, 'PLN' => 1, 'EUR' => TEST_VAL_PLN_TO_EUR_RATE }
-    };
-
-    private static final Integer TEST_VAL_ERROR_CODE = 105;
-    private static final String TEST_VAL_ERROR_TYPE = 'base_currency_access_restricted';
     private static Integer mockCallsCounter = 0;
 
     @TestSetup
@@ -34,7 +23,7 @@ global with sharing class FixerIoServiceTest {
         System.assert(exchangeRates.containsKey('EUR'), 'Expecting result contains specific key');
         System.assert(exchangeRates.get('EUR').containsKey('PLN'), 'Expecting result contains specific key');
         System.assertEquals(
-            TEST_VAL_EUR_TO_PLN_RATE,
+            ExchangeRateAppTestUtils.TEST_VAL_EUR_TO_PLN_RATE,
             exchangeRates.get('EUR').get('PLN'),
             'Expecting result contains specific value of exchange rate'
         );
@@ -56,12 +45,12 @@ global with sharing class FixerIoServiceTest {
         System.assert(exchangeRates.containsKey('EUR'), 'Expecting result contains specific key');
         System.assertEquals(3, exchangeRates.get('EUR').keySet().size(), 'Expecting result contains specific number of key');
         System.assertEquals(
-            TEST_VAL_EUR_TO_PLN_RATE,
+            ExchangeRateAppTestUtils.TEST_VAL_EUR_TO_PLN_RATE,
             exchangeRates.get('EUR').get('PLN'),
             'Expecting result contains specific value of exchange rate'
         );
         System.assertEquals(
-            TEST_VAL_EUR_TO_USD_RATE,
+            ExchangeRateAppTestUtils.TEST_VAL_EUR_TO_USD_RATE,
             exchangeRates.get('EUR').get('USD'),
             'Expecting result contains specific value of exchange rate'
         );
@@ -104,8 +93,8 @@ global with sharing class FixerIoServiceTest {
         System.assertEquals(1, exchangeRates.get('ERROR').keySet().size(), 'Expecting result contains specific number of key');
         for (String errorString : exchangeRates.get('ERROR').keySet()) {
             Map<String, Object> error = (Map<String, Object>) JSON.deserializeUntyped(errorString);
-            System.assertEquals(TEST_VAL_ERROR_TYPE, error.get('type'), 'Expecting specific value of error type');
-            System.assertEquals(TEST_VAL_ERROR_CODE, error.get('code'), 'Expecting specific value of error code');
+            System.assertEquals(ExchangeRateAppTestUtils.TEST_VAL_ERROR_TYPE, error.get('type'), 'Expecting specific value of error type');
+            System.assertEquals(ExchangeRateAppTestUtils.TEST_VAL_ERROR_CODE, error.get('code'), 'Expecting specific value of error code');
             System.assertNotEquals(null, error.get('Uuid'), 'Expecting specific value of error code');
         }
         System.assertEquals(1, mockCallsCounter, 'Expecting that there was one Http Call created');
@@ -130,8 +119,8 @@ global with sharing class FixerIoServiceTest {
         System.assertEquals(2, exchangeRates.get('ERROR').keySet().size(), 'Expecting result contains specific number of key');
         for (String errorString : exchangeRates.get('ERROR').keySet()) {
             Map<String, Object> error = (Map<String, Object>) JSON.deserializeUntyped(errorString);
-            System.assertEquals(TEST_VAL_ERROR_TYPE, error.get('type'), 'Expecting specific value of error type');
-            System.assertEquals(TEST_VAL_ERROR_CODE, error.get('code'), 'Expecting specific value of error code');
+            System.assertEquals(ExchangeRateAppTestUtils.TEST_VAL_ERROR_TYPE, error.get('type'), 'Expecting specific value of error type');
+            System.assertEquals(ExchangeRateAppTestUtils.TEST_VAL_ERROR_CODE, error.get('code'), 'Expecting specific value of error code');
             System.assertNotEquals(null, error.get('Uuid'), 'Expecting specific value of error code');
         }
         System.assertEquals(2, mockCallsCounter, 'Expecting that there were two Http Calls created');
@@ -155,12 +144,12 @@ global with sharing class FixerIoServiceTest {
         System.assertEquals(2, exchangeRates.keySet().size(), 'Expecting specific number of records were returned');
         System.assertEquals(3, exchangeRates.get('EUR').keySet().size(), 'Expecting result contains specific number of key');
         System.assertEquals(
-            TEST_VAL_EUR_TO_PLN_RATE,
+            ExchangeRateAppTestUtils.TEST_VAL_EUR_TO_PLN_RATE,
             exchangeRates.get('EUR').get('PLN'),
             'Expecting result contains specific value of exchange rate'
         );
         System.assertEquals(
-            TEST_VAL_EUR_TO_USD_RATE,
+            ExchangeRateAppTestUtils.TEST_VAL_EUR_TO_USD_RATE,
             exchangeRates.get('EUR').get('USD'),
             'Expecting result contains specific value of exchange rate'
         );
@@ -168,8 +157,8 @@ global with sharing class FixerIoServiceTest {
         System.assertEquals(1, exchangeRates.get('ERROR').keySet().size(), 'Expecting result contains specific number of key');
         for (String errorString : exchangeRates.get('ERROR').keySet()) {
             Map<String, Object> error = (Map<String, Object>) JSON.deserializeUntyped(errorString);
-            System.assertEquals(TEST_VAL_ERROR_TYPE, error.get('type'), 'Expecting specific value of error type');
-            System.assertEquals(TEST_VAL_ERROR_CODE, error.get('code'), 'Expecting specific value of error code');
+            System.assertEquals(ExchangeRateAppTestUtils.TEST_VAL_ERROR_TYPE, error.get('type'), 'Expecting specific value of error type');
+            System.assertEquals(ExchangeRateAppTestUtils.TEST_VAL_ERROR_CODE, error.get('code'), 'Expecting specific value of error code');
             System.assertNotEquals(null, error.get('Uuid'), 'Expecting specific value of error code');
         }
         System.assertEquals(2, mockCallsCounter, 'Expecting that there were two Http Calls created');
@@ -183,15 +172,18 @@ global with sharing class FixerIoServiceTest {
 
             String baseCurrency = ref.getParameters().get('base');
             FixerIoServiceMockResponseBody body = new FixerIoServiceMockResponseBody();
-            if (TEST_VAL_EXCHANGE_MAPPING.containsKey(baseCurrency)) {
+            if (ExchangeRateAppTestUtils.TEST_VAL_EXCHANGE_MAPPING.containsKey(baseCurrency)) {
                 List<String> symbols = ref.getParameters().get('symbols').split(',');
                 Map<String, Decimal> rates = new Map<String, Decimal>();
                 for (String currencySymbol : symbols) {
-                    rates.put(currencySymbol, TEST_VAL_EXCHANGE_MAPPING.get(baseCurrency).get(currencySymbol));
+                    rates.put(currencySymbol, ExchangeRateAppTestUtils.TEST_VAL_EXCHANGE_MAPPING.get(baseCurrency).get(currencySymbol));
                 }
                 body.setSuccess(true).setBase(baseCurrency).setRates(rates);
             } else {
-                body.setSuccess(false).setError(new Error().setCode(TEST_VAL_ERROR_CODE).setType(TEST_VAL_ERROR_TYPE));
+                body.setSuccess(false)
+                    .setError(
+                        new Error().setCode(ExchangeRateAppTestUtils.TEST_VAL_ERROR_CODE).setType(ExchangeRateAppTestUtils.TEST_VAL_ERROR_TYPE)
+                    );
             }
 
             HttpResponse res = new HttpResponse();
