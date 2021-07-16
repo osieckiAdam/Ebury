@@ -22,18 +22,15 @@
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
+ **/
 
 @IsTest
 @TestVisible
 private class di_BindingTest {
-
     @IsTest
     private static void givenApexBindingWhenGetInstanceThenInstance() {
         // Given
-        di_Binding binding = di_Binding.newInstance(
-            di_Binding.BindingType.Apex,
-            Bob.class.getName(), null, null, Bob.class.getName(), null);
+        di_Binding binding = di_Binding.newInstance(di_Binding.BindingType.Apex, Bob.class.getName(), null, null, Bob.class.getName(), null);
         // When
         Object boundInstance1 = binding.getInstance();
         Object boundInstance2 = binding.getInstance();
@@ -46,9 +43,7 @@ private class di_BindingTest {
     @IsTest
     private static void givenApexBindingWhenGetInstanceWithParamThenInstanceWithParam() {
         // Given
-        di_Binding binding = di_Binding.newInstance(
-            di_Binding.BindingType.Apex,
-            Bob.class.getName(), null, null, ProviderImpl.class.getName(), null);
+        di_Binding binding = di_Binding.newInstance(di_Binding.BindingType.Apex, Bob.class.getName(), null, null, ProviderImpl.class.getName(), null);
         // When
         Object boundInstance1 = binding.getInstance('Some value 1');
         Object boundInstance2 = binding.getInstance('Some value 2');
@@ -58,75 +53,101 @@ private class di_BindingTest {
         System.assert(boundInstance2 instanceof Bob);
         System.assertEquals('Some value 2', ((Bob) boundInstance2).Name);
     }
-    
+
     @IsTest
     private static void givenIncorrectApexBindingWhenGetInstanceThenThrowException() {
-        try{
+        try {
             //When
-            di_Binding binding = di_Binding.newInstance(
-            null, Bob.class.getName(), null, null, ProviderImpl.class.getName(), null);
+            di_Binding binding = di_Binding.newInstance(null, Bob.class.getName(), null, null, ProviderImpl.class.getName(), null);
             System.assert(false, 'No Exception was thrown.');
-        } catch(Exception ex){
+        } catch (Exception ex) {
             //Then
-            System.assert(ex instanceOf di_Binding.BindingException,'Exception thrown was not of type "di_Binding.BindingException"');
+            System.assert(ex instanceof di_Binding.BindingException, 'Exception thrown was not of type "di_Binding.BindingException"');
         }
     }
-    
+
     @IsTest
     private static void givenApexBindingsWithDeveloperNamesWhenSortThenReturnSortedBindingsList() {
-        
         List<di_Binding> bindings = new List<di_Binding>();
         List<di_Binding> sortedExpectedBindings = new List<di_Binding>();
-        
+
         di_Binding zoroBinding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            Zoro.class.getName(), null, null, ProviderImpl.class.getName(), null);
+            Zoro.class.getName(),
+            null,
+            null,
+            ProviderImpl.class.getName(),
+            null
+        );
         bindings.add(zoroBinding);
-        
+
         di_Binding charlieBinding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            Charlie.class.getName(), null, null, ProviderImpl.class.getName(), null);
+            Charlie.class.getName(),
+            null,
+            null,
+            ProviderImpl.class.getName(),
+            null
+        );
         bindings.add(charlieBinding);
-        
+
         di_Binding bobBinding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            Bob.class.getName(), null, null, ProviderImpl.class.getName(), null);
+            Bob.class.getName(),
+            null,
+            null,
+            ProviderImpl.class.getName(),
+            null
+        );
         bindings.add(bobBinding);
-        
+
         bindings.sort();
-        
+
         //Sorted based on developer names
         sortedExpectedBindings.add(bobBinding);
         sortedExpectedBindings.add(charlieBinding);
         sortedExpectedBindings.add(zoroBinding);
-        
-        
+
         System.assertEquals(sortedExpectedBindings, bindings, 'Binding sorted by default Developer Names');
     }
-    
+
     @IsTest
     private static void givenApexBindingsWithSobjectTypesWhenSortThenReturnSortedBindingsList() {
-        
         List<di_Binding> bindings = new List<di_Binding>();
         List<di_Binding> sortedExpectedBindings = new List<di_Binding>();
-        
+
         di_Binding zoroBinding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            Zoro.class.getName(), Contact.sObjectType, null, ProviderImpl.class.getName(), null);
+            Zoro.class.getName(),
+            Contact.sObjectType,
+            null,
+            ProviderImpl.class.getName(),
+            null
+        );
         bindings.add(zoroBinding);
-        
+
         di_Binding charlieBinding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            Charlie.class.getName(), Account.sObjectType, null, ProviderImpl.class.getName(), null);
+            Charlie.class.getName(),
+            Account.sObjectType,
+            null,
+            ProviderImpl.class.getName(),
+            null
+        );
         bindings.add(charlieBinding);
-        
+
         di_Binding bobBinding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            Bob.class.getName(), Opportunity.sObjectType, null, ProviderImpl.class.getName(), null);
+            Bob.class.getName(),
+            Opportunity.sObjectType,
+            null,
+            ProviderImpl.class.getName(),
+            null
+        );
         bindings.add(bobBinding);
-        
+
         bindings.sort();
-        
+
         //Sorted based on binding sObject types
         sortedExpectedBindings.add(charlieBinding);
         sortedExpectedBindings.add(zoroBinding);
@@ -134,30 +155,44 @@ private class di_BindingTest {
 
         System.assertEquals(sortedExpectedBindings, bindings, 'Binding sorted by default Developer Names');
     }
-    
+
     @IsTest
     private static void givenApexBindingsWithSequenceWhenSortThenReturnSortedBindingsList() {
-        
         List<di_Binding> bindings = new List<di_Binding>();
         List<di_Binding> sortedExpectedBindings = new List<di_Binding>();
-        
+
         di_Binding zoroBinding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            Zoro.class.getName(), Contact.sObjectType, 2, ProviderImpl.class.getName(), null);
+            Zoro.class.getName(),
+            Contact.sObjectType,
+            2,
+            ProviderImpl.class.getName(),
+            null
+        );
         bindings.add(zoroBinding);
-        
+
         di_Binding charlieBinding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            Charlie.class.getName(), Account.sObjectType, 3, ProviderImpl.class.getName(), null);
+            Charlie.class.getName(),
+            Account.sObjectType,
+            3,
+            ProviderImpl.class.getName(),
+            null
+        );
         bindings.add(charlieBinding);
-        
+
         di_Binding bobBinding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            Bob.class.getName(), Account.sObjectType, 1, ProviderImpl.class.getName(), null);
+            Bob.class.getName(),
+            Account.sObjectType,
+            1,
+            ProviderImpl.class.getName(),
+            null
+        );
         bindings.add(bobBinding);
-        
+
         bindings.sort();
-        
+
         //Sorted based on binding sequence
         sortedExpectedBindings.add(bobBinding);
         sortedExpectedBindings.add(charlieBinding);
@@ -167,17 +202,23 @@ private class di_BindingTest {
     }
 
     public class Bob {
-        public String Name {get;private set;}
-        public Bob() { }
-        public Bob(String name) { this.Name = name; }
+        public String Name { get; private set; }
+        public Bob() {
+        }
+        public Bob(String name) {
+            this.Name = name;
+        }
     }
-    
+
     public class Charlie {
-        public String Name {get;private set;}
-        public Charlie() { }
-        public Charlie(String name) { this.Name = name; }
+        public String Name { get; private set; }
+        public Charlie() {
+        }
+        public Charlie(String name) {
+            this.Name = name;
+        }
     }
-    
+
     public class Zoro {
         /*public String Name {get;private set;}
         public Zoro() { }

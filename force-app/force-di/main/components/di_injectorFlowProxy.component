@@ -26,7 +26,7 @@
 **/
 -->
 <apex:component controller="di_InjectorComponentFlowProxyController">
-    <apex:attribute name="flowName" type="String" assignTo="{!FlowNameValue}" description="" required="true"/>
-    <apex:attribute name="inputVariables" type="Object" assignTo="{!InputVariablesValue}" description=""/>
-    <apex:dynamicComponent componentValue="{!inject}" invokeAfterAction="true"/>
+  <apex:attribute name="flowName" type="String" assignTo="{!FlowNameValue}" description="" required="true" />
+  <apex:attribute name="inputVariables" type="Object" assignTo="{!InputVariablesValue}" description="" />
+  <apex:dynamicComponent componentValue="{!inject}" invokeAfterAction="true" />
 </apex:component>

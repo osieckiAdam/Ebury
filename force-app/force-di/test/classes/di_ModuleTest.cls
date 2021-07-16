@@ -24,26 +24,26 @@
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  **/
 
- /**
-  * Modifications:
-  * --------------
-  * B Anderson : Gettting the overall code-coverage > 75%
-  */ 
+/**
+ * Modifications:
+ * --------------
+ * B Anderson : Gettting the overall code-coverage > 75%
+ */
 @IsTest
 private class di_ModuleTest {
-
     @isTest
-    static void givenBindingInModuleWhenSetTypeThenGetModule(){
-
+    static void givenBindingInModuleWhenSetTypeThenGetModule() {
         // Given
-        di_Module module=new di_Module();
+        di_Module module = new di_Module();
         di_Binding bobBinding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            di_BindingTest.Bob.class.getName(), null, null,
-            di_BindingTest.Bob.class.getName(), null);
-        List<di_Binding> bindings = new List<di_Binding> {
-            bobBinding
-        };
+            di_BindingTest.Bob.class.getName(),
+            null,
+            null,
+            di_BindingTest.Bob.class.getName(),
+            null
+        );
+        List<di_Binding> bindings = new List<di_Binding>{ bobBinding };
         module.getBindings().add(bobBinding);
         // Then
         system.assertEquals(module, module.type(di_Binding.BindingType.Apex.name()));
@@ -52,38 +52,32 @@ private class di_ModuleTest {
     }
 
     @isTest
-    static void givenBadBindingTypeThenGetModuleException(){
-
+    static void givenBadBindingTypeThenGetModuleException() {
         // Given
-        di_Module module=new di_Module();
+        di_Module module = new di_Module();
         // Then
-        Boolean moduleExceptionThrown=false;
+        Boolean moduleExceptionThrown = false;
         try {
             module.type('not-valid');
-        } catch(di_Module.ModuleException excp) {
-            moduleExceptionThrown=true;
-
+        } catch (di_Module.ModuleException excp) {
+            moduleExceptionThrown = true;
         }
-        system.assertEquals(true,moduleExceptionThrown);
+        system.assertEquals(true, moduleExceptionThrown);
     }
 
     @isTest
-    static void givenModuleWhenSettingValuesThenGet(){
-
+    static void givenModuleWhenSettingValuesThenGet() {
         // Given
-        di_Module module=new di_Module();
+        di_Module module = new di_Module();
         // When
-        module.type(di_Binding.BindingType.Apex)
-        .data('test')
-        .sequence(1)
-        .bind(di_BindingTest.Bob.class);
-        di_Module mod= module.to(di_BindingTest.Bob.class);
- 
+        module.type(di_Binding.BindingType.Apex).data('test').sequence(1).bind(di_BindingTest.Bob.class);
+        di_Module mod = module.to(di_BindingTest.Bob.class);
+
         List<di_Binding> bindings = module.getBindings();
-     
+
         // Then
-        system.assertEquals('test',(String)bindings[0].Data);
-        system.assertEquals('apex',(String)bindings[0].BindingTypeAsString.toLowerCase());
-        system.assertEquals(1,bindings[0].bindingSequence);
+        system.assertEquals('test', (String) bindings[0].Data);
+        system.assertEquals('apex', (String) bindings[0].BindingTypeAsString.toLowerCase());
+        system.assertEquals(1, bindings[0].bindingSequence);
     }
 }

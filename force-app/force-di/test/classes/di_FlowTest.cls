@@ -1,7 +1,7 @@
 @isTest
 private with sharing class di_FlowTest {
     @isTest
-    public static void givenNullInputWhenObjectCreatedThenSetInitialized(){
+    public static void givenNullInputWhenObjectCreatedThenSetInitialized() {
         //Given
         Flow.Interview flow = null;
         //When
@@ -12,7 +12,7 @@ private with sharing class di_FlowTest {
     }
 
     @isTest
-    public static void givenStringValueWhenOutputThenStringAddedToSet(){
+    public static void givenStringValueWhenOutputThenStringAddedToSet() {
         //Given
         Flow.Interview flow = null;
         String variableName = 'Test';
@@ -24,7 +24,7 @@ private with sharing class di_FlowTest {
     }
 
     @isTest
-    public static void givenVariableNameWhenRequiredThenValueAddedToSet(){
+    public static void givenVariableNameWhenRequiredThenValueAddedToSet() {
         //Given
         Flow.Interview flow = null;
         String variableName = 'Test';

@@ -26,7 +26,7 @@
 **/
 -->
 <apex:component controller="di_InjectorComponentController">
-    <apex:attribute name="bindingName" type="String" assignTo="{!BindingNameValue}" description="" required="true"/>
-    <apex:attribute name="parameters" type="Object" assignTo="{!ParametersValue}" description=""/>
-    <apex:dynamicComponent componentValue="{!inject}" invokeAfterAction="true"/>
+  <apex:attribute name="bindingName" type="String" assignTo="{!BindingNameValue}" description="" required="true" />
+  <apex:attribute name="parameters" type="Object" assignTo="{!ParametersValue}" description="" />
+  <apex:dynamicComponent componentValue="{!inject}" invokeAfterAction="true" />
 </apex:component>

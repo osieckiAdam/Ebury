@@ -25,27 +25,26 @@
  * Modifications:
  * =============
  *  B Anderson : Gettting the overall code-coverage > 75%
- */ 
+ */
 @isTest
 private with sharing class di_BindingConfigWrapperTest {
-
     @isTest
-    static void givenBindingWrapperThenExtractAndValidate(){
+    static void givenBindingWrapperThenExtractAndValidate() {
         // Given
         di_BindingConfigWrapper wrapper = new di_BindingConfigWrapper(
-            'QualifiedAPIName'
-            , 'DeveloperName'
-            , 'NamespacePrefix'
-            , 'Type'
-            , 'To'
-            , 'BindingObject'
-            , 'BindingObjectQualifiedApiName'
-            , 'BindingObjectAlternate'
-            , 10.10
-            );
+            'QualifiedAPIName',
+            'DeveloperName',
+            'NamespacePrefix',
+            'Type',
+            'To',
+            'BindingObject',
+            'BindingObjectQualifiedApiName',
+            'BindingObjectAlternate',
+            10.10
+        );
         // Then
         system.assertEquals('QualifiedAPIName', wrapper.QualifiedAPIName);
-        system.assertEquals('DeveloperName',  wrapper.DeveloperName);
+        system.assertEquals('DeveloperName', wrapper.DeveloperName);
         system.assertEquals('NamespacePrefix', wrapper.NamespacePrefix);
         system.assertEquals('Type', wrapper.Type);
         system.assertEquals('To', wrapper.To);
@@ -56,21 +55,21 @@ private with sharing class di_BindingConfigWrapperTest {
     }
 
     @isTest
-    static void givenBindingWrapperWithMDTThenExtractAndValidate(){
+    static void givenBindingWrapperWithMDTThenExtractAndValidate() {
         // Given
         di_Binding__mdt bindingConfig = new di_Binding__mdt();
-        bindingConfig.QualifiedApiName='QualifiedAPIName';
-        bindingConfig.DeveloperName='DeveloperName';
-        bindingConfig.NamespacePrefix='NamespacePrefix';
-        bindingConfig.Type__c='Type';
-        bindingConfig.To__c='To';
-        bindingConfig.BindingObject__c='BindingObject';
-        bindingConfig.BindingObjectAlternate__c='BindingObjectAlternate';
-        bindingConfig.BindingSequence__c=10.10;
+        bindingConfig.QualifiedApiName = 'QualifiedAPIName';
+        bindingConfig.DeveloperName = 'DeveloperName';
+        bindingConfig.NamespacePrefix = 'NamespacePrefix';
+        bindingConfig.Type__c = 'Type';
+        bindingConfig.To__c = 'To';
+        bindingConfig.BindingObject__c = 'BindingObject';
+        bindingConfig.BindingObjectAlternate__c = 'BindingObjectAlternate';
+        bindingConfig.BindingSequence__c = 10.10;
         di_BindingConfigWrapper wrapper = new di_BindingConfigWrapper(bindingConfig);
         // Then
         system.assertEquals('QualifiedAPIName', wrapper.QualifiedAPIName);
-        system.assertEquals('DeveloperName',  wrapper.DeveloperName);
+        system.assertEquals('DeveloperName', wrapper.DeveloperName);
         system.assertEquals('NamespacePrefix', wrapper.NamespacePrefix);
         system.assertEquals('Type', wrapper.Type);
         system.assertEquals('To', wrapper.To);

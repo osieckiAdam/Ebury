@@ -25,11 +25,10 @@
  **/
 
 public with sharing class di_InjectorComponentController {
-
-    public String BindingNameValue {set; get;}
+    public String BindingNameValue { get; set; }
     // container id for lightning-- allows consumers to reference into (optional)
-    public String BindingIdValue {set; get;}
-    public Object ParametersValue {set; get;}
+    public String BindingIdValue { get; set; }
+    public Object ParametersValue { get; set; }
 
     public ApexPages.Component getInject() {
         ApexPages.Component cmp = null;
@@ -54,10 +53,6 @@ public with sharing class di_InjectorComponentController {
     // For some odd reason, this compiles and works.
     @testVisible
     private Object getInjectorFlowProxyInstance(String flowName, Object params) {
-        return new Component.di_injectorFlowProxy(
-            flowName = flowName,
-            inputVariables = params
-            );
+        return new Component.di_injectorFlowProxy(flowName = flowName, inputVariables = params);
     }
-
 }

@@ -23,106 +23,106 @@
  **/
 @isTest
 private with sharing class di_PlatformCacheTest {
-
     static final String EXPECTED_PARTITION_NAME = 'diPartition';
 
     @isTest
-    private static void givenNoPlatformCacheInstanceThenCreate(){
+    private static void givenNoPlatformCacheInstanceThenCreate() {
         // Given/ When
         di_PlatformCache cache = di_PlatformCache.getInstance();
 
         //Then
         System.assertEquals(true, cache == di_PlatformCache.instance);
-
     }
 
     @isTest
-    private static void givenPlatformCacheConfigThenCreate(){
+    private static void givenPlatformCacheConfigThenCreate() {
         // Given/ When
         di_Configurations__c config = di_PlatformCache.getConfig();
         //Then
-        System.assertEquals(true, config!=null);
-
+        System.assertEquals(true, config != null);
     }
 
     @isTest
-    private static void givenStoringBindingIsTrueThenGet(){
+    private static void givenStoringBindingIsTrueThenGet() {
         // Given/ When configuraiton is true
         makeData();
         //Then
-        System.assertEquals(true,di_PlatformCache.isStoringBindingInPlatformCache());
-
+        System.assertEquals(true, di_PlatformCache.isStoringBindingInPlatformCache());
     }
 
-
     @isTest
-    private static void givenPartitionNameSetThenGetNonNull(){
+    private static void givenPartitionNameSetThenGetNonNull() {
         // Given/ When partition name is set
         makeData();
         //Then
-        System.assertEquals(EXPECTED_PARTITION_NAME,di_PlatformCache.getPartitionName());
-
+        System.assertEquals(EXPECTED_PARTITION_NAME, di_PlatformCache.getPartitionName());
     }
 
     @isTest
-    private static void givenPartitionTTLSetThenGetSeconds(){
+    private static void givenPartitionTTLSetThenGetSeconds() {
         // Given/ When partition name is set
         di_PlatformCache cache = di_PlatformCache.getInstance();
         //Then
-        System.assertEquals(di_PlatformCache.NUM_OF_SECS_IN24HR,cache.getPartitionTTL());
-
+        System.assertEquals(di_PlatformCache.NUM_OF_SECS_IN24HR, cache.getPartitionTTL());
     }
 
     @isTest
-    private static void givenNoDataInCachePartitionThenGetEmptyKeys(){
+    private static void givenNoDataInCachePartitionThenGetEmptyKeys() {
         // Given/ When partition name is set
         makeData();
         di_PlatformCache cache = di_PlatformCache.getInstance();
         //Then
-        System.assertEquals(0,cache.getCacheKeyIndexMap().size());
-
+        System.assertEquals(0, cache.getCacheKeyIndexMap().size());
     }
     @isTest
-    private static void givenDataInCachePartitionIsNotEnabledThenGetEmptyKeys(){
+    private static void givenDataInCachePartitionIsNotEnabledThenGetEmptyKeys() {
         // Given when not storing ( )
         makeData(false);
         di_PlatformCache cache = di_PlatformCache.getInstance();
         // create binding
         di_Binding binding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            di_BindingTest.Bob.class.getName(), null, null, di_BindingTest.Bob.class.getName(), null);
+            di_BindingTest.Bob.class.getName(),
+            null,
+            null,
+            di_BindingTest.Bob.class.getName(),
+            null
+        );
         // When
         cache.addBindingToPlatformCache(binding);
         //Then
-        System.assertEquals(0,cache.getCacheKeyIndexMap().size());
-
+        System.assertEquals(0, cache.getCacheKeyIndexMap().size());
     }
 
     @isTest
-    private static void givenDataInCachePartitionIsEnabledThenGetEmptyKeys(){
+    private static void givenDataInCachePartitionIsEnabledThenGetEmptyKeys() {
         // Given when  storing ( )
-        Integer expected=0;
+        Integer expected = 0;
         makeData(true);
         di_PlatformCache cache = di_PlatformCache.getInstance();
         // if there IS NO Partition created; let's not FAIL
         Cache.OrgPartition orgPartition = di_PlatformCache.getPartition();
         // if we have cache informaiton, then we expect 1
-        if ( orgPartition != null ) {
-            expected=1;
+        if (orgPartition != null) {
+            expected = 1;
         }
         // create binding
         di_Binding binding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            di_BindingTest.Bob.class.getName(), null, null, di_BindingTest.Bob.class.getName(), null);
+            di_BindingTest.Bob.class.getName(),
+            null,
+            null,
+            di_BindingTest.Bob.class.getName(),
+            null
+        );
         // When
         cache.addBindingToPlatformCache(binding);
         //Then
-        System.assertEquals(expected,cache.getCacheKeyIndexMap().size());
-
+        System.assertEquals(expected, cache.getCacheKeyIndexMap().size());
     }
 
     @isTest
-    private static void  givenCachedBindingsClearThenGetEmpty(){
+    private static void givenCachedBindingsClearThenGetEmpty() {
         // Given
         makeData(true);
 
@@ -130,146 +130,145 @@ private with sharing class di_PlatformCacheTest {
         di_PlatformCache.clearCachedBindings();
         Set<String> keys = di_PlatformCache.getPartitionKeys();
         //Then
-        System.assertEquals(true,keys == null || keys.size()==0);
-
+        System.assertEquals(true, keys == null || keys.size() == 0);
     }
 
     @isTest
-    private static void givenInvalidDeveloperNameThenGetEmptyKeys(){
+    private static void givenInvalidDeveloperNameThenGetEmptyKeys() {
         // Given
         makeData(true);
         di_PlatformCache cache = di_PlatformCache.getInstance();
         // when
-        list<di_Binding>  binding = cache.retrieveBindings(null,Account.sObjectType);
+        list<di_Binding> binding = cache.retrieveBindings(null, Account.sObjectType);
         //Then
-        System.assertEquals(0,binding.size());
+        System.assertEquals(0, binding.size());
     }
     @isTest
-    private static void givenInvalidSObjectTypeThenGetEmptyKeys(){
+    private static void givenInvalidSObjectTypeThenGetEmptyKeys() {
         // Given
         makeData(true);
         di_PlatformCache cache = di_PlatformCache.getInstance();
         // when
-        list<di_Binding>  binding = cache.retrieveBindings('value',null);
+        list<di_Binding> binding = cache.retrieveBindings('value', null);
         //Then
-        System.assertEquals(0,binding.size());
+        System.assertEquals(0, binding.size());
     }
     //
     @isTest
-    private static void givenCacheMapAddedThenGetKeys(){
+    private static void givenCacheMapAddedThenGetKeys() {
         // Given
         di_PlatformCache cache = di_PlatformCache.getInstance();
         // When
         Cache.OrgPartition orgPartition = di_PlatformCache.getPartition();
         //Then
-        System.assertEquals(orgPartition != null,cache.pushCacheKeyIndexMapToCache());
+        System.assertEquals(orgPartition != null, cache.pushCacheKeyIndexMapToCache());
     }
     @isTest
-    private static void givenLogMethodThenGetKeys(){
+    private static void givenLogMethodThenGetKeys() {
         // Given
         di_PlatformCache.DEBUGGING = true;
         // When
         //Then
-        System.assertEquals(true,di_PlatformCache.log('test'));
-        System.assertEquals(true,di_PlatformCache.log(new NullPointerException()));
+        System.assertEquals(true, di_PlatformCache.log('test'));
+        System.assertEquals(true, di_PlatformCache.log(new NullPointerException()));
     }
 
     @IsTest
-    private static void givenValidBindingThenAddBinding(){
+    private static void givenValidBindingThenAddBinding() {
         // Given
         di_PlatformCache cache = di_PlatformCache.getInstance();
         // create binding
         di_Binding binding = di_Binding.newInstance(
             di_Binding.BindingType.Apex,
-            di_BindingTest.Bob.class.getName(), null, null, di_BindingTest.Bob.class.getName(), null);
+            di_BindingTest.Bob.class.getName(),
+            null,
+            null,
+            di_BindingTest.Bob.class.getName(),
+            null
+        );
         String workingDeveloperName = binding.developerName.toLowerCase().trim();
 
         // When
         cache.addBindingToKeyIndex(binding);
         // Then
         system.assertEquals(1, cache.getCacheKeyIndexMap().size());
-        system.assertNotEquals(null,cache.getCacheKeyIndexMap().get(workingDeveloperName));
+        system.assertNotEquals(null, cache.getCacheKeyIndexMap().get(workingDeveloperName));
     }
 
     //
     @IsTest
-    private static void givenValidTSTypeAndNameThenHash(){
+    private static void givenValidTSTypeAndNameThenHash() {
         //
         // Given
         di_PlatformCache cache = di_PlatformCache.getInstance();
         // When
-        String hash= cache.constructKeyName(Account.sObjectType,'test');
+        String hash = cache.constructKeyName(Account.sObjectType, 'test');
         // Then
         system.assertEquals(true, hash != null);
-
     }
     //
     @IsTest
-    private static void givenKeyIndexNameThenGetKey(){
+    private static void givenKeyIndexNameThenGetKey() {
         //
         // Given
         di_PlatformCache cache = di_PlatformCache.getInstance();
         // When
         // Then
         system.assertEquals(di_PlatformCache.BINDING_KEY, cache.getKeyIndexName());
-
     }
     //
     @IsTest
-    private static void givenValidSTypeAndNameThenHash(){
+    private static void givenValidSTypeAndNameThenHash() {
         //
         // Given
         di_PlatformCache cache = di_PlatformCache.getInstance();
         // When
-        String hash= cache.constructKeyName(Account.sObjectType,'test');
+        String hash = cache.constructKeyName(Account.sObjectType, 'test');
         // Then
         system.assertEquals(true, hash != null);
-
     }
 
     //
     @IsTest
-    private static void givenDevNameAndSTypeThenGetHashAndKey(){
+    private static void givenDevNameAndSTypeThenGetHashAndKey() {
         //
         // Given
         di_PlatformCache cache = di_PlatformCache.getInstance();
         // When
-        String key= cache.getKeyName('test',Account.sObjectType),
-               hash= cache.constructKeyName(Account.sObjectType,'test');
+        String key = cache.getKeyName('test', Account.sObjectType), hash = cache.constructKeyName(Account.sObjectType, 'test');
         // Then
         system.assertEquals(hash, key);
-
     }
 
     @isTest
-    private static void givenReadOnlyAccessThenGetInstance(){
+    private static void givenReadOnlyAccessThenGetInstance() {
         // Given
-        User ruser = di_PlatformCacheTest.setROTestUser(false,false,false,false);
+        User ruser = di_PlatformCacheTest.setROTestUser(false, false, false, false);
         System.runAs(ruser) {
             // Then
             di_Configurations__c config = di_PlatformCache.getConfig();
-            system.assertEquals(true, config!=null);
-            system.assertEquals(false,  config.UsePlatformCacheToStoreBindings__c);
+            system.assertEquals(true, config != null);
+            system.assertEquals(false, config.UsePlatformCacheToStoreBindings__c);
             system.assertEquals(null, config.OrgCachePartitionName__c);
         }
     }
 
     @isTest
-    private static void givenANewConfigSettingThenGetThatInstance(){
+    private static void givenANewConfigSettingThenGetThatInstance() {
         // Given
-        User ruser = di_PlatformCacheTest.setROTestUser(false,false,false,false);
+        User ruser = di_PlatformCacheTest.setROTestUser(false, false, false, false);
         final String PARTITION = 'test';
         di_Configurations__c usrConfig = new di_Configurations__c();
         usrConfig.SetupOwnerId = ruser.Id;
         usrConfig.UsePlatformCacheToStoreBindings__c = true;
         usrConfig.OrgCachePartitionName__c = PARTITION;
         insert usrConfig;
-       
+
         System.runAs(ruser) {
             // Then
             di_Configurations__c config = di_PlatformCache.getConfig();
-            system.assertEquals(true, config!=null);
-            system.assertEquals(true,  config.UsePlatformCacheToStoreBindings__c);
+            system.assertEquals(true, config != null);
+            system.assertEquals(true, config.UsePlatformCacheToStoreBindings__c);
             system.assertEquals(PARTITION, config.OrgCachePartitionName__c);
         }
     }
@@ -278,13 +277,12 @@ private with sharing class di_PlatformCacheTest {
     // Private Helper
     ///////////////////////////////////////////////////////////////////////////////
 
-
-    private static void makeData(){
+    private static void makeData() {
         makeData(true);
     }
 
-    private static void makeData(Boolean isStoring){
-        di_Configurations__c setting = new di_Configurations__c(SetupOwnerId=Userinfo.getUserId());
+    private static void makeData(Boolean isStoring) {
+        di_Configurations__c setting = new di_Configurations__c(SetupOwnerId = Userinfo.getUserId());
 
         setting.OrgCachePartitionName__c = EXPECTED_PARTITION_NAME;
         setting.UsePlatformCacheToStoreBindings__c = isStoring;
@@ -294,9 +292,9 @@ private with sharing class di_PlatformCacheTest {
     /**
      * readonly user
      */
-    private static User setROTestUser(Boolean read, Boolean create, Boolean edit, Boolean remove){
-		Profile prof;
-		Boolean usedMinimumAccessProfile = false;
+    private static User setROTestUser(Boolean read, Boolean create, Boolean edit, Boolean remove) {
+        Profile prof;
+        Boolean usedMinimumAccessProfile = false;
         try {
             prof = [SELECT Id FROM Profile WHERE Name = 'Read Only'];
         } catch (QueryException ex) {
@@ -307,18 +305,20 @@ private with sharing class di_PlatformCacheTest {
             }
         }
 
-        User newUser = new User(Alias = 'readonly',
-                                Email='standarduser@mytest.com',
-                                EmailEncodingKey='UTF-8',
-                                LastName='TestingReadOnly',
-                                LanguageLocaleKey='en_US',
-                                LocaleSidKey='en_US',
-                                ProfileId = prof.Id,
-                                TimeZoneSidKey='America/Los_Angeles',
-                                UserName='readonly@mytest.com');
+        User newUser = new User(
+            Alias = 'readonly',
+            Email = 'standarduser@mytest.com',
+            EmailEncodingKey = 'UTF-8',
+            LastName = 'TestingReadOnly',
+            LanguageLocaleKey = 'en_US',
+            LocaleSidKey = 'en_US',
+            ProfileId = prof.Id,
+            TimeZoneSidKey = 'America/Los_Angeles',
+            UserName = 'readonly@mytest.com'
+        );
 
         insert newUser;
- 
+
         return newUser;
-    }// end of setTestUser
+    } // end of setTestUser
 }

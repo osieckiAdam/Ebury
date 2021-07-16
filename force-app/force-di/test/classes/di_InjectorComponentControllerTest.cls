@@ -26,31 +26,29 @@
 /**
  * Modifications:
  *  B Anderson - Updated Unit Tests ( needing >75% overall)
- */ 
+ */
 @IsTest
 private class di_InjectorComponentControllerTest {
-
     @isTest
-    static void givenWrongBindingNameValueWhenGetInjectThenThrowException(){
+    static void givenWrongBindingNameValueWhenGetInjectThenThrowException() {
         //given
         di_InjectorComponentController newObj = new di_InjectorComponentController();
-   
+
         try {
             //When
             newObj.getInject();
-        } catch(Exception e) {
+        } catch (Exception e) {
             //Then
             System.assertEquals(e.getMessage().contains('List index out of bounds'), true, 'Correct exception is not thrown');
         }
     }
 
     @isTest
-    static void givenFlowNameWhenGetInjectorFlowProxyInstanceThenMethodCall(){
+    static void givenFlowNameWhenGetInjectorFlowProxyInstanceThenMethodCall() {
         di_InjectorComponentController newObj = new di_InjectorComponentController();
-        Object result= newObj.getInjectorFlowProxyInstance('HelloWorld', 'Account');
+        Object result = newObj.getInjectorFlowProxyInstance('HelloWorld', 'Account');
         //Then
-        System.assertEquals(true, result instanceOf Component.di_injectorFlowProxy );
-
+        System.assertEquals(true, result instanceof Component.di_injectorFlowProxy);
     }
 
     @isTest
@@ -58,20 +56,16 @@ private class di_InjectorComponentControllerTest {
         // Given
         final String BINDING_NAME = 'myapexpage_cmp';
         di_InjectorComponentController newObj = new di_InjectorComponentController();
-        newObj.BindingNameValue=BINDING_NAME;
-     
+        newObj.BindingNameValue = BINDING_NAME;
+
         Component.Apex.PageBlock pageBlk = new Component.Apex.PageBlock();
-        di_Injector.Org.Bindings.set(new di_Module()
-                                     .visualforceComponent()
-                                     .bind(BINDING_NAME)
-                                     .toObject(pageBlk));
+        di_Injector.Org.Bindings.set(new di_Module().visualforceComponent().bind(BINDING_NAME).toObject(pageBlk));
         //When
 
-        Object result= newObj.getInject();
+        Object result = newObj.getInject();
         //Then
-        System.assertNotEquals(null, result );
-        System.assertEquals(true,result instanceOf Component.apex.pageblock);
-
+        System.assertNotEquals(null, result);
+        System.assertEquals(true, result instanceof Component.apex.pageblock);
     }
 
     @isTest
@@ -81,13 +75,11 @@ private class di_InjectorComponentControllerTest {
         final String BINDING_ID = 'myapexpage_id';
         // When
         di_InjectorComponentController newObj = new di_InjectorComponentController();
-        newObj.BindingNameValue=BINDING_NAME;
-        newObj.BindingIdValue=BINDING_ID;
-   
+        newObj.BindingNameValue = BINDING_NAME;
+        newObj.BindingIdValue = BINDING_ID;
+
         //Then
-        System.assertEquals( BINDING_ID,newObj.BindingIdValue);
-        System.assertEquals( BINDING_NAME,newObj.BindingNameValue);
-
+        System.assertEquals(BINDING_ID, newObj.BindingIdValue);
+        System.assertEquals(BINDING_NAME, newObj.BindingNameValue);
     }
-
 }

@@ -22,20 +22,19 @@
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
+ **/
 
 @IsTest
 private class di_InjectorControllerTest {
     @isTest
-    private static void givenStandardControllerWhenObjectCreatedThenConstructorCalled(){
+    private static void givenStandardControllerWhenObjectCreatedThenConstructorCalled() {
         ApexPages.StandardController StandardController;
         String bindingName = 'flow_AccountRecord_VF';
         di_InjectorController newObj = new di_InjectorController(StandardController);
         newObj.getThis();
-        try{
+        try {
             di_InjectorController.getBinding(bindingName);
-        }
-        catch(Exception e){
+        } catch (Exception e) {
             System.assertEquals(e.getMessage().contains('List index out of bounds'), true, 'Correct exception is not thrown');
         }
     }

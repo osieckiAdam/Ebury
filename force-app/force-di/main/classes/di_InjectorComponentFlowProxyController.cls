@@ -22,16 +22,14 @@
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
+ **/
 
 public with sharing class di_InjectorComponentFlowProxyController {
-
     public String FlowNameValue { get; set; }
 
     public Object InputVariablesValue { get; set; }
 
     public Component.Flow.Interview getInject() {
-
         Component.Flow.Interview interview = new Component.Flow.Interview();
         interview.name = FlowNameValue;
 
@@ -47,19 +45,18 @@ public with sharing class di_InjectorComponentFlowProxyController {
         // as BindingParam.parameters and then our injected flow will retrieve
         // the variable values by calling the BindingParam class' invocable method.
 
-        if ( InputVariablesValue instanceof Map<Object, Object> ) {
+        if (InputVariablesValue instanceof Map<Object, Object>) {
             // convert map to have string keys else invoking flow will fail
             Map<Object, Object> oldMap = (Map<Object, Object>) InputVariablesValue;
             Map<String, Object> newMap = new Map<String, Object>();
-            for ( Object key : oldMap.keySet() ) {
-                newMap.put( String.valueOf( key ), oldMap.get( key ) );
+            for (Object key : oldMap.keySet()) {
+                newMap.put(String.valueOf(key), oldMap.get(key));
             }
             di_BindingParam.parameters = newMap;
-        } else if ( InputVariablesValue instanceof Map<String, Object> ) {
+        } else if (InputVariablesValue instanceof Map<String, Object>) {
             di_BindingParam.parameters = (Map<String, Object>) InputVariablesValue;
         }
 
         return interview;
     }
-
 }

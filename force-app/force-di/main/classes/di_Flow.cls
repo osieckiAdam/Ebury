@@ -22,13 +22,12 @@
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
+ **/
 
 /**
  * Fluent wrapper around Flow.Interview, to improve API and mocking
  **/
 public class di_Flow {
-
     private Flow.Interview flow = null;
     @testVisible
     private Set<String> outputVarsNames;
@@ -41,16 +40,16 @@ public class di_Flow {
     }
 
     /**
-    * Include the following parameter in the output map
-    **/
+     * Include the following parameter in the output map
+     **/
     public di_Flow output(String variableName) {
         outputVarsNames.add(variableName);
         return this;
     }
 
     /**
-    * Ensure the following parameter is returned and if not throw an exception
-    **/
+     * Ensure the following parameter is returned and if not throw an exception
+     **/
     public di_Flow required(String variableName) {
         output(variableName);
         outputVarsNamesRequired.add(variableName);
@@ -58,30 +57,29 @@ public class di_Flow {
     }
 
     /**
-    * Runs the Flow
-    **/
+     * Runs the Flow
+     **/
     public Map<String, Object> run() {
         try {
             flow.start();
             Map<String, Object> outputVars = new Map<String, Object>();
-            for(String outputVar : outputVarsNames) {
+            for (String outputVar : outputVarsNames) {
                 Object outputVarValue = flow.getVariableValue(outputVar);
-                if(outputVarValue!=null) {
+                if (outputVarValue != null) {
                     outputVars.put(outputVar, outputVarValue);
-                } else if(outputVarsNamesRequired.contains(outputVar)) {
+                } else if (outputVarsNamesRequired.contains(outputVar)) {
                     throw new FlowException('Output variable ' + outputVar + ' expected but not returned from Flow');
                 }
             }
             return outputVars;
-        }
-        finally {
+        } finally {
             init();
         }
     }
 
     /**
-    * Runs the Flow returns the given parameter
-    **/
+     * Runs the Flow returns the given parameter
+     **/
     public Object returning(String outputVariableName) {
         return required(outputVariableName).run().get(outputVariableName);
     }
@@ -94,5 +92,6 @@ public class di_Flow {
         outputVarsNamesRequired = new Set<String>();
     }
 
-    public class FlowException extends Exception {}
+    public class FlowException extends Exception {
+    }
 }

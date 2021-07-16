@@ -22,16 +22,15 @@
  *  OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
  *  OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  *  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
-**/
+ **/
 
 /**
-  *  Roughly based on the Java API. Instances of this class can be given to an Injector instance
-  *    or registered via Binding__mdt and thus available to the global scope Injector
-  *    See https://github.com/google/guice/wiki/GettingStarted
-  *    See https://github.com/google/guice/wiki/ModulesShouldBeFastAndSideEffectFree
+ *  Roughly based on the Java API. Instances of this class can be given to an Injector instance
+ *    or registered via Binding__mdt and thus available to the global scope Injector
+ *    See https://github.com/google/guice/wiki/GettingStarted
+ *    See https://github.com/google/guice/wiki/ModulesShouldBeFastAndSideEffectFree
  **/
 public virtual class di_Module {
-
     private List<di_Binding> bindings = new List<di_Binding>();
     private di_Binding.BindingType bindingType;
     private String developerName;
@@ -50,15 +49,16 @@ public virtual class di_Module {
     /**
      * Called by the framework when its ready to receive the binding config
      **/
-    public virtual void configure() { }
+    public virtual void configure() {
+    }
 
     /**
      * Type of binding, see also alias methods apex(), lightningComponent(), visualforceComponent()
      **/
     public di_Module type(String value) {
         List<di_Binding.BindingType> bindEnumValues = di_Binding.BindingType.values();
-        for(di_Binding.BindingType bindEnumValue : bindEnumValues) {
-            if(bindEnumValue.name().equals(value)) {
+        for (di_Binding.BindingType bindEnumValue : bindEnumValues) {
+            if (bindEnumValue.name().equals(value)) {
                 bindingType = bindEnumValue;
                 return this;
             }
@@ -175,7 +175,7 @@ public virtual class di_Module {
         // This can be a string (typically late binding) or an object (instance binding)
         this.to = to;
         // Attempt to auto infer type of binding
-        if(to instanceof di_Flow) {
+        if (to instanceof di_Flow) {
             return flow().addBinding();
         }
         return addBinding();
@@ -192,16 +192,10 @@ public virtual class di_Module {
 
     private di_Module addBinding() {
         // Construct binding and configure it
-        di_Binding newBinding = di_Binding.newInstance(
-            bindingType,
-            developerName,
-            bindingObject,
-            bindingSequence,
-            to,
-            bindingData);
+        di_Binding newBinding = di_Binding.newInstance(bindingType, developerName, bindingObject, bindingSequence, to, bindingData);
         bindings.add(newBinding);
 
-        di_PlatformCache.getInstance().addBindingToPlatformCache( newBinding );
+        di_PlatformCache.getInstance().addBindingToPlatformCache(newBinding);
 
         init();
         return this;
@@ -216,5 +210,6 @@ public virtual class di_Module {
         to = null;
     }
 
-    public class ModuleException extends Exception {}
+    public class ModuleException extends Exception {
+    }
 }
