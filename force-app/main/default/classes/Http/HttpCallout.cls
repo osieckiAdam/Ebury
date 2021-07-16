@@ -5,13 +5,12 @@
  * @date 2021-09-11
  */
 public virtual class HttpCallout {
-
     public HttpRequest request;
     public Http httpInstance;
 
     public HttpResponse response;
     @TestVisible
-    private String endpoint; 
+    private String endpoint;
     @TestVisible
     private String method;
     @TestVisible
@@ -57,7 +56,6 @@ public virtual class HttpCallout {
         this.headers.put(key, body);
         return this;
     }
-
 
     public virtual HttpCallout addHeader(Map<String, String> collectionHeaders) {
         for (String header : collectionHeaders.keySet()) {

@@ -1,6 +1,5 @@
 @IsTest
 public with sharing class UuidTest {
-
     @isTest
     static void should_CreateSeveralValidUuids() {
         //given
@@ -11,10 +10,9 @@ public with sharing class UuidTest {
 
         //when
         Test.startTest();
-        for(Integer i = 0; i < 10; i++) {
+        for (Integer i = 0; i < 10; i++) {
             Uuid uuid = new Uuid();
             Matcher matcher = pattern.matcher(uuid.getValue());
-            
 
             //then
             System.assert(matcher.matches(), 'Expecting generated UUID matches the pattern');
@@ -48,7 +46,7 @@ public with sharing class UuidTest {
             Test.stopTest();
 
             System.assert(false, 'Error expected here');
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             String expectedError = invalidUuidValue + ' is not a valid UUID';
             //then
             System.assert(ex.getMessage().contains(expectedError), 'Expecting exception is thrown');
@@ -67,7 +65,7 @@ public with sharing class UuidTest {
             Test.stopTest();
 
             System.assert(false, 'Error expected here');
-        } catch(Exception ex) {
+        } catch (Exception ex) {
             String expectedError = invalidUuidValue + ' is not a valid UUID';
             //then
             System.assert(ex.getMessage().contains(expectedError));
@@ -76,19 +74,15 @@ public with sharing class UuidTest {
 
     @isTest
     static void shouldReturnFalseWhenUuidIsEmptyString() {
-
         Test.startTest();
-            System.assertEquals(false, UUID.isValid(''), 'Expecting empty string is not valid UUID');
+        System.assertEquals(false, UUID.isValid(''), 'Expecting empty string is not valid UUID');
         Test.stopTest();
     }
 
-    
     @isTest
     static void shouldReturnFalseWhenUuidIsNull() {
-
         Test.startTest();
-            System.assertEquals(false, UUID.isValid(null), 'Expecting null is not valid UUID');
+        System.assertEquals(false, UUID.isValid(null), 'Expecting null is not valid UUID');
         Test.stopTest();
     }
-
 }

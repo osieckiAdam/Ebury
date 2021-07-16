@@ -46,7 +46,6 @@ public without sharing class Uuid {
         final String invalidValueError = unformattedValue + ' is not a valid UUID value';
 
         unformattedValue = unformattedValue.replaceAll('[^a-zA-Z0-9]', '');
-        System.debug(LoggingLevel.DEBUG, '(unformattedValue): ' + unformattedValue);
 
         if (unformattedValue.length() != (UUID_V4_LENGTH - 4)) {
             throw new UuidException(invalidValueError);
