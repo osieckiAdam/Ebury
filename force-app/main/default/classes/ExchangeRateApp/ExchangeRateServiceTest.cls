@@ -98,6 +98,38 @@ global with sharing class ExchangeRateServiceTest {
     }
 
     @IsTest
+    static void shouldProperlyHandleCacheWhenGetTwoNewSellCurrencies() {
+        //given
+        Map<String, Set<String>> requestedValues = new Map<String, Set<String>>{ 'EUR' => new Set<String>{ 'PLN' } };
+        Map<String, Set<String>> requestedValues2 = new Map<String, Set<String>>{ 'EUR' => new Set<String>{ 'EUR', 'USD' } };
+        ExchangeRateAppTestUtils.ExchangeRateProviderMock erpm = new ExchangeRateAppTestUtils.ExchangeRateProviderMock();
+        di_Injector.Org.Bindings.set(new di_Module().bind(ExchangeRateProvider.class).toObject(Test.createStub(ExchangeRateProvider.class, erpm)));
+
+        //when
+        Test.startTest();
+        ExchangeRateService.getInstance().getExchangeRates(requestedValues);
+        Map<String, Map<String, Decimal>> result = ExchangeRateService.getInstance().getExchangeRates(requestedValues2);
+        Test.stopTest();
+
+        //then
+        System.assertEquals(3, result.get('EUR').keySet().size(), 'Expecting specific number of target currencies');
+        System.assert(result.get('EUR').containsKey('PLN'), 'Expecting result contains specific value of target currency');
+        System.assert(result.get('EUR').containsKey('USD'), 'Expecting result contains specific value of target currency');
+        System.assert(result.get('EUR').containsKey('EUR'), 'Expecting result contains specific value of target currency');
+        System.assertEquals(
+            ExchangeRateAppTestUtils.TEST_VAL_EUR_TO_PLN_RATE,
+            result.get('EUR').get('PLN'),
+            'Expecting result contains specific value of target currency exchange rate'
+        );
+        System.assertEquals(
+            ExchangeRateAppTestUtils.TEST_VAL_EUR_TO_USD_RATE,
+            result.get('EUR').get('USD'),
+            'Expecting result contains specific value of target currency exchange rate'
+        );
+        System.assertEquals(2, ExchangeRateAppTestUtils.mockCallsCounter, 'Expecting specific number of calls were performed');
+    }
+
+    @IsTest
     static void shouldProperlyHandleCacheWhenNewCurrencyIsRequested() {
         //given
         Map<String, Set<String>> requestedValues = new Map<String, Set<String>>{ 'EUR' => new Set<String>{ 'PLN', 'USD', 'EUR' } };
