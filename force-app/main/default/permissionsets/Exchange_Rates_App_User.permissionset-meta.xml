@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <applicationVisibilities>
+        <application>Exchange_Rates</application>
+        <visible>true</visible>
+    </applicationVisibilities>
     <description>Permissions required to use the Exchange Rates app</description>
     <fieldPermissions>
         <editable>false</editable>
@@ -18,4 +22,8 @@
         <object>Trade__c</object>
         <viewAllRecords>true</viewAllRecords>
     </objectPermissions>
+    <tabSettings>
+        <tab>Trade__c</tab>
+        <visibility>Visible</visibility>
+    </tabSettings>
 </PermissionSet>

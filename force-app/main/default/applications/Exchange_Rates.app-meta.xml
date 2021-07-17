@@ -15,5 +15,4 @@
     <navType>Standard</navType>
     <tabs>Trade__c</tabs>
     <uiType>Lightning</uiType>
-    <utilityBar>Exchange_Rates_UtilityBar</utilityBar>
 </CustomApplication>
