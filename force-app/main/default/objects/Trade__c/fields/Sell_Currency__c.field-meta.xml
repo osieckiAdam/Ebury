@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Sell_Currency__c</fullName>
+    <description>Set of Currencies that are available in our application to be chosen as &apos;Sell Currency&apos;</description>
+    <externalId>false</externalId>
+    <inlineHelpText>Set of Currencies that are available in our application to be chosen as &apos;Sell Currency&apos;</inlineHelpText>
+    <label>Sell Currency</label>
+    <required>true</required>
+    <trackTrending>false</trackTrending>
+    <type>Picklist</type>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetName>Sell_Currencies</valueSetName>
+    </valueSet>
+</CustomField>

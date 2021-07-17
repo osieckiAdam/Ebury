@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<GlobalValueSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <customValue>
+        <fullName>EUR</fullName>
+        <default>true</default>
+        <label>EUR</label>
+    </customValue>
+    <description>Set of Currencies that are available in our application to be chosen as &apos;Sell Currency&apos;</description>
+    <masterLabel>Sell Currencies</masterLabel>
+    <sorted>false</sorted>
+</GlobalValueSet>
