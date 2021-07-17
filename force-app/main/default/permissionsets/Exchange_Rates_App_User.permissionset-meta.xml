@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Permissions required to use the Exchange Rates app</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <label>Exchange Rates App User</label>
+    <license>Salesforce</license>
+</PermissionSet>
