@@ -1,5 +1,5 @@
 <template>
-  <c-modal modal-header="Booked Trades" modal-save-handler={modalSaveHandler}>
+  <c-modal onmodalclose={modalCloseHandler} modal-header="Booked Trades" modal-save-handler={modalSaveHandler}>
     <p slot="body">This stuff can't be tabbed to when the modal is open</p>
     <div slot="modalContent" class="modalContent slds-modal__content slds-p-around_medium"></div>
   </c-modal>
