@@ -46,7 +46,7 @@ fi
 
 echo "Metadata was deployed succesfully."
 
-sfdx force:user:permset:assign -n ${Exchange_Rates_App_User} -u ${ORG_NAME} --json
+sfdx force:user:permset:assign -n Exchange_Rates_App_User -u ${ORG_NAME} --json
 if [ "$?" = "1" ]
 then
 	echo "Permission sets were not assigned."
