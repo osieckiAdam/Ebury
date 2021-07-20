@@ -121,6 +121,13 @@ global with sharing class ExchangeRateAppTestUtils {
                                 }
                             }
                         }
+                        //handle the case when no target currencies were specified so we expect that all available 
+                        //currencies will be returned
+                        if(result.get(sourceCurrency) == null) {
+                            result.put(sourceCurrency,
+                                        TEST_VAL_EXCHANGE_MAPPING.get(sourceCurrency)
+                                    );
+                        }
                     }
                 }
                 return result;
