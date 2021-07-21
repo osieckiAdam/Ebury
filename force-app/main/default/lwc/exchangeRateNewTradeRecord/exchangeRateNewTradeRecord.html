@@ -8,14 +8,13 @@
       aria-describedby="modal-content-id-1"
       class="slds-modal slds-fade-in-open"
     >
-      <div class="slds-modal__container" style="min-height: 20em">
-
+      <div class="slds-modal__container" style="min-width: 560px; min-height: 20em">
         <header class="slds-modal__header">
           <button class="slds-button slds-button_icon slds-modal__close slds-button_icon-inverse" title="Close" onclick={closeModal}>
             <lightning-icon icon-name="utility:close" alternative-text="close" variant="inverse" size="small"></lightning-icon>
-            <span class="slds-assistive-text">Close</span>
+            <span class="slds-assistive-text">{label.newTrade_close}</span>
           </button>
-          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">Modal/PopUp Box header LWC</h2>
+          <h2 id="modal-heading-01" class="slds-text-heading_medium slds-hyphenate">{label.newTrade_modalHeader}</h2>
         </header>
 
         <div style="min-height: 30rem" class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
@@ -32,6 +31,26 @@
               </div>
             </lightning-layout-item>
             <lightning-layout-item size="4" padding="around-small" class="slds-align_absolute-center">
+              <lightning-layout multiple-rows vertical-align="top">
+                <lightning-layout-item size="12" class="slds-align_absolute-center">
+                  <label class="slds-form-element__label">{label.newTrade_rate}</label>
+                </lightning-layout-item>
+                <lightning-layout-item size="2" padding="horizontal-small" class="slds-align_absolute-center">
+                  <lightning-icon icon-name="utility:right" alternative-text="right" size="small" title="small size"> </lightning-icon>
+                </lightning-layout-item>
+                <lightning-layout-item size="8" padding="horizontal-small" class="slds-align_absolute-center">
+                  <lightning-formatted-number
+                    class="slds-form-element__static slds-align_absolute-center"
+                    format-style="decimal"
+                    value={exchangeRate}
+                    minimum-fraction-digits="4"
+                    maximum-fraction-digits="4"
+                  ></lightning-formatted-number>
+                </lightning-layout-item>
+                <lightning-layout-item size="2" padding="horizontal-small" class="slds-align_absolute-center">
+                  <lightning-icon icon-name="utility:right" alternative-text="right" size="small" title="small size"> </lightning-icon>
+                </lightning-layout-item>
+              </lightning-layout>
             </lightning-layout-item>
             <lightning-layout-item size="4" padding="around-small" class="slds-align_absolute-center">
               <lightning-combobox
@@ -43,26 +62,25 @@
               ></lightning-combobox>
             </lightning-layout-item>
           </lightning-layout>
+
           <lightning-layout>
             <lightning-layout-item size="4" padding="around-small" class="slds-align_absolute-center">
-                <lightning-input type="number"
-                label="Sell Amount"
-                required
-                step="0.001">
-</lightning-input>
+              <lightning-input onchange={handleChangeSellAmount} value={sellAmount} type="number" label={label.newTrade_sellAmount} required step="0.01">
+              </lightning-input>
             </lightning-layout-item>
+            <lightning-layout-item size="4" padding="around-small" class="slds-align_absolute-center"> </lightning-layout-item>
             <lightning-layout-item size="4" padding="around-small" class="slds-align_absolute-center">
+              <lightning-input type="number" value={buyAmount} disabled label={label.newTrade_buyAmount} step="0.01"> </lightning-input>
             </lightning-layout-item>
-            <lightning-layout-item size="4" padding="around-small" class="slds-align_absolute-center">
-              </lightning-layout-item>
           </lightning-layout>
         </div>
 
         <footer class="slds-modal__footer">
-          <button class="slds-button slds-button_brand slds-float_left" onclick={submitDetails} title="OK">Create</button>
-          <button class="slds-button slds-button_neutral slds-float_right" onclick={closeModal} title="Cancel">Cancel</button>
+          <button class="slds-button slds-button_brand slds-float_left" disabled={isButtonDisabled} onclick={handleClickCreateButton} title={label.newTrade_ok}>
+            {label.newTrade_create}
+          </button>
+          <button class="slds-button slds-button_neutral slds-float_right" onclick={closeModal} title="Cancel">{label.newTrade_cancel}</button>
         </footer>
-
       </div>
     </section>
     <div class="slds-backdrop slds-backdrop_open"></div>

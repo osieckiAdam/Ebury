@@ -1,36 +1,44 @@
 import { LightningElement, track } from 'lwc';
 import { NavigationMixin } from 'lightning/navigation';
 import { ShowToastEvent } from 'lightning/platformShowToastEvent';
+import { reduceErrors } from 'c/ldsUtils';
+import labelService from './labels';
+
 import getAvailableCurrencies from '@salesforce/apex/ExchangeRateTradeNewRecordController.getAvailableCurrencies';
 import getExchangeRates from '@salesforce/apex/ExchangeRateTradeNewRecordController.getExchangeRates';
+import insertTrade from '@salesforce/apex/ExchangeRateTradeNewRecordController.insertTrade';
+
+
 
 const DEFAULT_SELL_CURRENCY = 'EUR';
-const DEFAULT_BUY_CURRENCY = 'PLN';
+const DEFAULT_SELL_AMOUNT = 1000;
+const DEFAULT_CURRENCY_REFRESH_INTERVAL = 20000;
 export default class ExchangeRatesNewTradeRecord extends NavigationMixin(LightningElement) {
-  @track isModalOpen = false;
-
-  selectedSellCurrency = DEFAULT_SELL_CURRENCY;
-  selectedBuyCurrency = DEFAULT_BUY_CURRENCY;
-
+  @track exchangeRates = new Map();
   @track buyCurrencyOptions = [];
   @track sellCurrencyOptions = [];
+
+  selectedSellCurrency;
+  selectedBuyCurrency;
+  sellAmount = DEFAULT_SELL_AMOUNT;
+
+  isModalOpen = false;
+  label = labelService._labels;
 
   connectedCallback() {
     this.isModalOpen = true;
 
     let exchangeRatesMap = {
-      'sellCurrency': 'EUR',
-      'buyCurrencies': []
+      sellCurrency: DEFAULT_SELL_CURRENCY,
+      buyCurrencies: []
     };
 
     getExchangeRates({ currencies: JSON.stringify(exchangeRatesMap) })
       .then((result) => {
-        console.log('exchange rates: ' + result);
-        console.log({ ...result });
+        this.handleExchangeRatesResult(result);
       })
       .catch((error) => {
-        this.error = error;
-        console.log(error);
+        this.showErrorNotification(reduceErrors(error));
       });
 
     getAvailableCurrencies()
@@ -42,24 +50,49 @@ export default class ExchangeRatesNewTradeRecord extends NavigationMixin(Lightni
           this.buyCurrencyOptions = [...this.buyCurrencyOptions, { label: element, value: element }];
         });
         Object.values(sellCurrencies).forEach((element) => {
-          console.log(element);
           this.sellCurrencyOptions = [...this.sellCurrencyOptions, { label: element, value: element }];
         });
       })
       .catch((error) => {
-        this.error = error;
-        console.log('ERROR', error);
+        this.showErrorNotification(reduceErrors(error));
       });
   }
 
-  openModal() {
-    this.isModalOpen = true;
+  retrieveFreshData(sellCurrency, buyCurrencies) {
+    let exchangeRatesMap = {
+      sellCurrency: sellCurrency,
+      buyCurrencies: buyCurrencies
+    };
+
+    getExchangeRates({ currencies: JSON.stringify(exchangeRatesMap) })
+      .then((result) => {
+        this.handleExchangeRatesResult(result);
+      })
+      .catch((error) => {
+        this.showErrorNotification(reduceErrors(error));
+      });
   }
-  closeModal() {
-    this.isModalOpen = false;
-    this.navigateToExchangeRateAppPage();
+
+  handleExchangeRatesResult(result) {
+    const timestamp = new Date().getTime();
+    let exchangeRatesResult = { ...result };
+    Object.keys(exchangeRatesResult).forEach((sellCurrency) => {
+      let buyCurrenciesRates = exchangeRatesResult[sellCurrency];
+
+      Object.keys(buyCurrenciesRates).forEach((buyCurrency) => {
+        if (!this.exchangeRates.has(sellCurrency)) {
+          this.exchangeRates.set(sellCurrency, {});
+        }
+        this.exchangeRates.get(sellCurrency)[buyCurrency] = {
+          currencyCode: buyCurrency,
+          exchangeRate: buyCurrenciesRates[buyCurrency],
+          timestamp: timestamp
+        };
+      });
+    });
   }
-  submitDetails() {
+
+  handleClickCreateButton() {
     const isInputsCorrect = [...this.template.querySelectorAll('lightning-input')].reduce((validSoFar, inputField) => {
       inputField.reportValidity();
       return validSoFar && inputField.checkValidity();
@@ -68,23 +101,38 @@ export default class ExchangeRatesNewTradeRecord extends NavigationMixin(Lightni
       this.isModalOpen = false;
 
       this.navigateToExchangeRateAppPage();
-      this.showNotification();
-    } else {
-      const evt = new ShowToastEvent({
-        title: 'Error',
-        message: 'Error',
-        variant: 'error'
-      });
-      this.dispatchEvent(evt);
+      let trade = {
+        buyAmount: this.buyAmount,
+        buyCurrency: this.selectedBuyCurrency,
+        rate: this.exchangeRate,
+        sellAmount: this.sellAmount,
+        sellCurrency: this.selectedSellCurrency
+      };
+      insertTrade({ currencies: JSON.stringify(trade) })
+        .then(() => {
+          this.showSuccessNotification('Record was inserted succesfully');
+        })
+        .catch((error) => {
+          this.showErrorNotification(reduceErrors(error));
+        });
     }
   }
 
-  handleSellCurrencyChange() {
-    console.log('handleSellCurrencyChange');
+  handleSellCurrencyChange(event) {
+    this.selectedSellCurrency = event.currentTarget.value;
   }
 
-  handleBuyCurrencyChange() {
-    console.log('handleSellCurrencyChange');
+  handleBuyCurrencyChange(event) {
+    this.selectedBuyCurrency = event.currentTarget.value;
+  }
+
+  handleChangeSellAmount(event) {
+    this.sellAmount = event.currentTarget.value;
+  }
+
+  closeModal() {
+    this.isModalOpen = false;
+    this.navigateToExchangeRateAppPage();
   }
 
   navigateToExchangeRateAppPage() {
@@ -96,12 +144,48 @@ export default class ExchangeRatesNewTradeRecord extends NavigationMixin(Lightni
     });
   }
 
-  showNotification() {
+  showSuccessNotification(message) {
     const evt = new ShowToastEvent({
       title: 'Success',
-      message: 'New Record is created',
+      message: message,
       variant: 'success'
     });
     this.dispatchEvent(evt);
   }
+
+  showErrorNotification(errorMessage) {
+    const evt = new ShowToastEvent({
+      title: 'Error',
+      message: 'Something unexpected happened, please contact with administrator. Error message: ' + errorMessage,
+      variant: 'error',
+      mode: 'sticky'
+    });
+    this.dispatchEvent(evt);
+  }
+
+  get exchangeRate() {
+    if (this.selectedSellCurrency && this.selectedBuyCurrency) {
+      if (this.exchangeRates.has(this.selectedSellCurrency) && this.exchangeRates.get(this.selectedSellCurrency)[this.selectedBuyCurrency]) {
+        let rate = this.exchangeRates.get(this.selectedSellCurrency)[this.selectedBuyCurrency];
+        if (new Date().getTime() - DEFAULT_CURRENCY_REFRESH_INTERVAL > rate.timestamp) {
+          this.retrieveFreshData(this.selectedSellCurrency, [this.selectedBuyCurrency]);
+        }
+        return this.exchangeRates.get(this.selectedSellCurrency)[this.selectedBuyCurrency].exchangeRate;
+      }
+    }
+    return '';
+  }
+
+  get buyAmount() {
+    if (this.sellAmount && this.exchangeRate) {
+      return this.sellAmount * this.exchangeRate;
+    }
+    return '';
+  }
+
+  get isButtonDisabled() {
+    return !(this.selectedBuyCurrency && this.selectedSellCurrency && this.sellAmount > 0);
+  }
+
+
 }
