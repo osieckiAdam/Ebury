@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomLabels xmlns="http://soap.sforce.com/2006/04/metadata">
+
+    <labels>
+        <fullName>newTrade_buyAmount</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>newTrade_buyAmount</shortDescription>
+        <value>Buy Amount</value>
+    </labels>
+    <labels>
+        <fullName>newTrade_cancel</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>newTrade_cancel</shortDescription>
+        <value>Cancel</value>
+    </labels>
+
+    <labels>
+        <fullName>newTrade_close</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>newTrade_close</shortDescription>
+        <value>Close</value>
+    </labels>
+    <labels>
+        <fullName>newTrade_create</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>newTrade_create</shortDescription>
+        <value>Create</value>
+    </labels>
+    <labels>
+        <fullName>newTrade_modalHeader</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>newTrade_modalHeader</shortDescription>
+        <value>New Trade</value>
+    </labels>
+    <labels>
+        <fullName>newTrade_ok</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>newTrade_ok</shortDescription>
+        <value>OK</value>
+    </labels>
+    <labels>
+        <fullName>newTrade_rate</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>newTrade_rate</shortDescription>
+        <value>Rate</value>
+    </labels>
+    <labels>
+        <fullName>newTrade_sellAmount</fullName>
+        <language>en_US</language>
+        <protected>true</protected>
+        <shortDescription>newTrade_sellAmount</shortDescription>
+        <value>Sell Amount</value>
+    </labels>
+    </CustomLabels>
