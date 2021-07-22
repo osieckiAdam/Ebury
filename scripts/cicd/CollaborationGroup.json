@@ -1,0 +1,15 @@
+{
+    "records": [
+        {
+            "attributes": {
+                "type": "CollaborationGroup",
+                "referenceId": "CollaborationGroupRef1"
+            },
+            "Name": "Trade Reviewers",
+            "CollaborationType": "Public",
+            "Description": "Group for Trade Reviewers",
+            "CanHaveGuests": false,
+            "IsBroadcast": false
+        }
+    ]
+}
