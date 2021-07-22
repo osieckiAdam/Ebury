@@ -9,7 +9,10 @@ public with sharing class FixerIoService implements ExchangeRateProvider {
                 .endpoint('http://data.fixer.io/api/latest')
                 .addParameter('base', sellCurrency)
                 .addParameter('symbols', symbols)
-                .addParameter('access_key', 'eb841eb6f3a00d7745682ea3a0a96263')
+                //COMMENT: THIS IS NOT SAFE WAY TO KEEP ACCESS KEYS, 
+                //I COULD MOVE THIS TO CUSTOM SETTING AND NOT KEEP IT IN REPO
+                //BUT IN THAT CASE MANUAL STEPS WOULD BE NECESSARY TO SETUP TEST ENV
+                .addParameter('access_key', '78d67f47c144612f12b3ddbc8b46d481')
                 .builder();
 
             HttpResponse resp = callout.send();
