@@ -75,4 +75,4 @@ fi
 
 echo "Permission sets were assigned successfully."
 
-sfdx force:org:open -u ${ORG_NAME}
+sfdx force:org:open -u ${ORG_NAME} -p lightning/app/c__Exchange_Rates/
